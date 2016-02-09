@@ -1,0 +1,28 @@
+<project name="Jmeter Report" basedir="." default="package">
+	
+    <property name="src.dir" value="${basedir}/src"/>
+	<property name="bin.dir" value="${basedir}/bin"/>
+	<property name="dist.dir" value="${basedir}/dist"/>	
+	
+	<target name="clean">
+	    <delete dir="${bin.dir}" failonerror="false"/>
+		<delete dir="${dist.dir}" failonerror="false"/>
+		<delete file="${basedir}/../JmeterReport.jar"/>
+	</target>
+    
+	<target name="compile" depends="clean">
+		<mkdir dir="${bin.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="true"/>   
+	</target>
+	
+    <target name="package" depends="compile" description="Package the Jmeter Report App.">
+        <mkdir dir="${dist.dir}"/>
+    	<jar destfile="${dist.dir}/JmeterReport.jar" basedir="${bin.dir}">
+        	<manifest>
+        		<attribute name="Main-Class" value="StatisticsCalculator"/>
+        	</manifest>
+        </jar>
+    	<copy tofile="${basedir}/../JmeterReport.jar" file="${dist.dir}/JmeterReport.jar"/>
+    </target>
+	
+</project>

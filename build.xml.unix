@@ -1,0 +1,50 @@
+<project name="performance" basedir="." default="test">
+        
+    <property name="jmeter.props" value=""/>    
+    <property name="runName" value=""/>
+    
+    <target name="test" depends="" description="Run Performance Tests.">
+        
+        <property file="${jmeter.props}"/>
+        <echo message="${runName}"/>
+        <echo message="${jmeter.home}"/>        
+        
+        <tstamp>
+            <format property="timestamp" pattern="yyyy-MM-dd'_'HH:mm:ss.SSS"/>
+        </tstamp>
+        
+        <property name="result.dir.unique" value="${result.home}/${timestamp}/"/>
+        <property name="result.dir" value="${result.home}/${timestamp}/"/>
+                 
+        <exec executable="${jmeter.home}/bin/jmeter.sh">           
+            <arg value="-n"/>
+            <arg value="-t"/>
+            <arg value="${testplan.home}/${script}"/>
+            <arg value="-Jserver=${server}"/>
+            <arg value="-Jpath=${path}"/>
+            <arg value="-Jport=${port}"/>
+            <arg value="-JnumberUsers=${numberUsers}"/>
+            <arg value="-JrunTime=${runTime}"/>
+            <arg value="-Jtimeout.connect=${timeout.connect}"/>
+            <arg value="-Jtimeout.response=${timeout.response}"/>
+            <arg value="-Jresult.dir=${result.dir}"/>
+        </exec>
+        
+        <available file="${result.dir}/data.xml" property="isFileAvail"/>
+        <fail unless="isFileAvail" message="JMeter file 'data.xml' not present!"/>
+        
+        <java jar="JmeterReport.jar" fork="true">
+            <jvmarg value="-Xmx1024m" />
+            <arg value="data.xml"/>
+            <arg value="${result.dir}"/>
+            <arg value="${runName}"/>
+            <arg value="${runTime}"/>
+            <arg value="${timeout.connect}"/>
+            <arg value="${timeout.response}"/>
+            <arg value="${server}"/>
+            <arg value="${appName}"/>
+        </java>
+
+    </target>
+
+</project>
